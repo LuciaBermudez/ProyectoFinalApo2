@@ -1,3 +1,4 @@
+// Clase que define el mapa del juego como una cuadrícula de casillas
 public class GameMap {
     private Tile[][] grid;
 

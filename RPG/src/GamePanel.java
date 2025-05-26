@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GamePanel extends JPanel implements KeyListener {
-    private final int TILE_SIZE = 30;
-    private final int ROWS = 20;
+    private final int TILE_SIZE = 70;
+    private final int ROWS = 10;
     private final int COLS = 20;
     private Image heroImage;
     private Image enemyImage;
+    private Image fondoImage;
+
 
     private Hero hero;
     private List<Enemy> enemies;
@@ -17,14 +19,16 @@ public class GamePanel extends JPanel implements KeyListener {
 
     public GamePanel() {
         hero = new Hero(1, 1);
-        enemies = new ArrayList<>();
-        enemies.add(new Enemy(5, 5, "enemigo1"));
-        enemies.add(new Enemy(6, 2, "enemigo2"));
-        enemies.add(new Enemy(3, 7, "enemigo3"));
 
-        // Cargar imágenes (ajusta ruta a tus imágenes)
+        enemies = new ArrayList<>();
+        enemies.add(new Enemy(5, 5, "."));
+        enemies.add(new Enemy(6, 2, "."));
+        enemies.add(new Enemy(3, 7, "."));
+
+        // implementacion
         heroImage = new ImageIcon(getClass().getResource("/resources/hero.png")).getImage();
         enemyImage = new ImageIcon(getClass().getResource("/resources/enemy.png")).getImage();
+        fondoImage = new ImageIcon(getClass().getResource("/resources/fondo.png")).getImage();
 
         setFocusable(true);
         requestFocusInWindow();
@@ -41,32 +45,41 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
 
-        for (int row = 0; row < ROWS; row++) {
-            for (int col = 0; col < COLS; col++) {
+    // Dibujar fondo en cada casilla
+    for (int row = 0; row < ROWS; row++) {
+        for (int col = 0; col < COLS; col++) {
+            if (fondoImage != null) {
+                g.drawImage(fondoImage, col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE, this);
+            } else {
+                // Fondo alternativo si no hay imagen
                 g.setColor(Color.LIGHT_GRAY);
                 g.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                g.setColor(Color.BLACK);
-                g.drawRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
+            g.setColor(Color.BLACK);
+            g.drawRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
-
-        if (heroImage != null) {
-            g.drawImage(heroImage, hero.getX() * TILE_SIZE, hero.getY() * TILE_SIZE, TILE_SIZE, TILE_SIZE, this);
-        }
-
-        if (enemyImage != null) {
-            for (Enemy enemy : enemies) {
-                g.drawImage(enemyImage, enemy.getX() * TILE_SIZE, enemy.getY() * TILE_SIZE, TILE_SIZE, TILE_SIZE, this);
-            }
-        }
-
-        // Mostrar HP del héroe
-        g.setColor(Color.BLACK);
-        g.drawString("HP Héroe: " + hero.getHp(), 10, ROWS * TILE_SIZE + 20);
     }
+
+    // Dibujar héroe
+    if (heroImage != null) {
+        g.drawImage(heroImage, hero.getX() * TILE_SIZE, hero.getY() * TILE_SIZE, TILE_SIZE, TILE_SIZE, this);
+    }
+
+    // Dibujar enemigos
+    if (enemyImage != null) {
+        for (Enemy enemy : enemies) {
+            g.drawImage(enemyImage, enemy.getX() * TILE_SIZE, enemy.getY() * TILE_SIZE, TILE_SIZE, TILE_SIZE, this);
+        }
+    }
+
+    // Mostrar HP del héroe
+    g.setColor(Color.BLACK);
+    g.drawString("HP Héroe: " + hero.getHp(), 10, ROWS * TILE_SIZE + 20);
+}
+
 
     private boolean isOccupied(int x, int y) {
         for (Enemy e : enemies) {
