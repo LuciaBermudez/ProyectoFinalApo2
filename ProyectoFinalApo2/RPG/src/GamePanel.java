@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GamePanel extends JPanel implements KeyListener {
-    private final int TILE_SIZE = 36;
+    private final int TILE_SIZE = 37;
     private final int ROWS = 20;
     private final int COLS = 20;
     private Image heroImage;
