@@ -10,15 +10,15 @@ public class Enemy extends Character {
         this.type = type.toLowerCase();
 
         switch(this.type) {
-            case "Enemigo1":
+            case "enemigo1":
                 this.hp = 80;
                 this.atk = 15;
                 break;
-            case "Enemigo2":
+            case "enemigo2":
                 this.hp = 40;
                 this.atk = 8;
                 break;
-            case "Enemigo3":
+            case "enemigo3":
                 this.hp = 100;
                 this.atk = 20;
                 break;
@@ -51,3 +51,4 @@ public class Enemy extends Character {
         }
     }
 }
+

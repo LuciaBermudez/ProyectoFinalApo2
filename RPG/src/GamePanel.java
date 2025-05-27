@@ -5,18 +5,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GamePanel extends JPanel implements KeyListener {
-    private final int TILE_SIZE = 70;
-    private final int ROWS = 10;
+    private final int TILE_SIZE = 20;
+    private final int ROWS = 20;
     private final int COLS = 20;
     private Image heroImage;
     private Image enemyImage;
     private Image fondoImage;
-
-
+    private Image itemImage;
+    private int itemX = 3;
+    private int itemY = 6;
+    private boolean itemActive = true;
     private Hero hero;
     private List<Enemy> enemies;
     private Timer enemyTimer;
-
+    private final int HERO_MAX_HP = 100;
     public GamePanel() {
         hero = new Hero(1, 1);
 
@@ -29,7 +31,7 @@ public class GamePanel extends JPanel implements KeyListener {
         heroImage = new ImageIcon(getClass().getResource("/resources/hero.png")).getImage();
         enemyImage = new ImageIcon(getClass().getResource("/resources/enemy.png")).getImage();
         fondoImage = new ImageIcon(getClass().getResource("/resources/fondo.png")).getImage();
-
+        itemImage =    new ImageIcon(getClass().getResource("/resources/Item.png")).getImage();
         setFocusable(true);
         requestFocusInWindow();
         addKeyListener(this);
@@ -62,7 +64,10 @@ protected void paintComponent(Graphics g) {
             g.drawRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
     }
-
+    // Antes de dibujar el héroe y enemigos
+    if (itemActive && itemImage != null) {
+        g.drawImage(itemImage, itemX * TILE_SIZE, itemY * TILE_SIZE, TILE_SIZE, TILE_SIZE, this);
+    }
     // Dibujar héroe
     if (heroImage != null) {
         g.drawImage(heroImage, hero.getX() * TILE_SIZE, hero.getY() * TILE_SIZE, TILE_SIZE, TILE_SIZE, this);
@@ -87,7 +92,9 @@ protected void paintComponent(Graphics g) {
         }
         return false;
     }
-
+    public void heal(int amount) {
+        int newHp = Math.min(HERO_MAX_HP, hero.getHp() + amount);
+    }
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
@@ -101,11 +108,36 @@ protected void paintComponent(Graphics g) {
 
         if (!isOccupied(newX, newY)) {
             hero.setPosition(newX, newY);
+               // Aquí agregas esta comprobación para el ítem
+    if (itemActive && newX == itemX && newY == itemY) {
+        int healAmount = 20;
+        hero.heal(healAmount);
+        itemActive = false;
+        JOptionPane.showMessageDialog(this, "¡Héroe recogió un ítem y recuperó " + healAmount + " de vida!");
+    }
             checkCombat();
             repaint();
         }
     }
+private void showVictoryPanel() {
+    JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
 
+    if (topFrame != null) {
+        topFrame.getContentPane().removeAll();
+
+        VictoryPanel vp = new VictoryPanel(() -> {
+            // Acción para reiniciar el juego:
+            topFrame.getContentPane().removeAll();
+            topFrame.getContentPane().add(new GamePanel());
+            topFrame.revalidate();
+            topFrame.repaint();
+        });
+
+        topFrame.getContentPane().add(vp);
+        topFrame.revalidate();
+        topFrame.repaint();
+    }
+}
     private void checkCombat() {
         List<Enemy> toRemove = new ArrayList<>();
         for (Enemy e : enemies) {
@@ -140,6 +172,9 @@ protected void paintComponent(Graphics g) {
             }
         }
         enemies.removeAll(toRemove);
+          if (enemies.isEmpty()) {
+        showVictoryPanel();
+        }
     }
 
     @Override
