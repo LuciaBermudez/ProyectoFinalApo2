@@ -5,7 +5,7 @@ public class App {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("RPG Turnos - Mapa con Casillas");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(700, 700);
+            frame.setSize(900, 900);
 
             // Usamos GamePanel sin pasarle el frame
             GamePanel panel = new GamePanel();
