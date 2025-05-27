@@ -56,7 +56,6 @@ protected void paintComponent(Graphics g) {
             if (fondoImage != null) {
                 g.drawImage(fondoImage, col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE, this);
             } else {
-                // Fondo alternativo si no hay imagen
                 g.setColor(Color.LIGHT_GRAY);
                 g.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
@@ -64,23 +63,43 @@ protected void paintComponent(Graphics g) {
             g.drawRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
     }
-    // Antes de dibujar el héroe y enemigos
+
+    // Dibujar ítem si está activo
     if (itemActive && itemImage != null) {
         g.drawImage(itemImage, itemX * TILE_SIZE, itemY * TILE_SIZE, TILE_SIZE, TILE_SIZE, this);
     }
+
     // Dibujar héroe
     if (heroImage != null) {
         g.drawImage(heroImage, hero.getX() * TILE_SIZE, hero.getY() * TILE_SIZE, TILE_SIZE, TILE_SIZE, this);
+
+        // Barra de vida del héroe
+        int heroHpWidth = (int) ((double) hero.getHp() / HERO_MAX_HP * TILE_SIZE);
+        g.setColor(Color.RED);
+        g.fillRect(hero.getX() * TILE_SIZE, hero.getY() * TILE_SIZE - 10, TILE_SIZE, 5); // Fondo barra
+        g.setColor(Color.GREEN);
+        g.fillRect(hero.getX() * TILE_SIZE, hero.getY() * TILE_SIZE - 10, heroHpWidth, 5); // Vida actual
+        g.setColor(Color.BLACK);
+        g.drawRect(hero.getX() * TILE_SIZE, hero.getY() * TILE_SIZE - 10, TILE_SIZE, 5); // Borde
     }
 
     // Dibujar enemigos
     if (enemyImage != null) {
         for (Enemy enemy : enemies) {
             g.drawImage(enemyImage, enemy.getX() * TILE_SIZE, enemy.getY() * TILE_SIZE, TILE_SIZE, TILE_SIZE, this);
+
+            // Barra de vida del enemigo
+            int enemyHpWidth = (int) ((double) enemy.getHp() / 100 * TILE_SIZE); // Asumiendo HP máximo de 100
+            g.setColor(Color.RED);
+            g.fillRect(enemy.getX() * TILE_SIZE, enemy.getY() * TILE_SIZE - 10, TILE_SIZE, 5); // Fondo barra
+            g.setColor(Color.GREEN);
+            g.fillRect(enemy.getX() * TILE_SIZE, enemy.getY() * TILE_SIZE - 10, enemyHpWidth, 5); // Vida actual
+            g.setColor(Color.BLACK);
+            g.drawRect(enemy.getX() * TILE_SIZE, enemy.getY() * TILE_SIZE - 10, TILE_SIZE, 5); // Borde
         }
     }
 
-    // Mostrar HP del héroe
+    // Mostrar información del héroe (opcional)
     g.setColor(Color.BLACK);
     g.drawString("HP Héroe: " + hero.getHp(), 10, ROWS * TILE_SIZE + 20);
 }
